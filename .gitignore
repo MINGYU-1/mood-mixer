@@ -1,0 +1,5 @@
+/images
+*.jpg
+/mood-mixer-practice
+*.pkl
+*.csv
