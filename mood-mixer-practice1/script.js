@@ -1,3 +1,4 @@
+// script.js
 document.addEventListener('DOMContentLoaded', () => {
     const findTrackBtn = document.getElementById('find-track-btn');
     const resultSection = document.getElementById('result-section');
@@ -27,13 +28,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     findTrackBtn.addEventListener('click', () => {
+        // 현재 슬라이더 및 키워드 값 가져오기
         const energyValue = energySlider.value;
         const vibeValue = vibeSlider.value;
         const selectedKeywords = Array.from(document.querySelectorAll('.keyword-btn.active'))
                                       .map(btn => btn.textContent);
 
+        // 로딩 애니메이션 표시
         resultSection.innerHTML = `<div class="loader"></div>`;
 
+        // 백엔드에 데이터 전송하여 추천 요청
         fetch('/recommend', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -45,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(response => response.json())
         .then(data => {
+            // 추천 결과를 받아와 카드 형태로 표시
             resultSection.innerHTML = `
                 <div class="result-card">
                     <img class="album-art" src="${data.album_art_url}" alt="${data.album}">

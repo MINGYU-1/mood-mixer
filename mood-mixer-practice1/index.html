@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>K-HIPHOP Track Mixer</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Noto Sans KR -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #121212;
+        }
+        .slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #333;
+            border-radius: 5px;
+            cursor: pointer;
+            outline: none;
+        }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: #9333ea; /* purple-600 */
+            border-radius: 50%;
+            border: 4px solid #1f2937; /* gray-800 */
+            box-shadow: 0 0 5px #9333ea;
+            transition: transform 0.2s ease;
+        }
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+        .album-shadow {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loader {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 flex justify-center p-4 sm:p-8">
+    <div class="container w-full max-w-2xl mx-auto">
+        <!-- Header Section -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl sm:text-5xl font-black tracking-tighter">K-HIPHOP <br />
+                <span class="text-purple-500">TRACK MIXER</span>
+            </h1>
+            <p class="text-gray-400 mt-2 text-sm sm:text-base">무드·에너지·키워드로 지금 당신의 트랙을 찾아보세요</p>
+        </header>
+
+        <!-- Album Showcase -->
+        <section class="flex justify-center items-center gap-4 sm:gap-6 mb-10">
+            <figure class="w-24 h-24 sm:w-32 sm:h-32 rounded-lg overflow-hidden album-shadow transition-transform duration-300 hover:scale-105">
+                <img src="누명.jpg" alt="누명 앨범 커버" class="w-full h-full object-cover"/>
+            </figure>
+            <figure class="w-28 h-28 sm:w-40 sm:h-40 rounded-lg overflow-hidden album-shadow transition-transform duration-300 hover:scale-110 z-10">
+                <img src="에넥도트.jpg" alt="The Anecdote 앨범 커버" class="w-full h-full object-cover"/>
+            </figure>
+            <figure class="w-24 h-24 sm:w-32 sm:h-32 rounded-lg overflow-hidden album-shadow transition-transform duration-300 hover:scale-105">
+                <img src="킁.jpg" alt="킁 앨범 커버" class="w-full h-full object-cover"/>
+            </figure>
+        </section>
+
+        <!-- Main Mixer Controls -->
+        <main id="mood-mixer-container" class="bg-gray-800 p-6 sm:p-8 rounded-2xl border border-gray-700 space-y-8">
+            <!-- Sliders -->
+            <div class="space-y-6">
+                <!-- Energy Slider -->
+                <div class="slider-group">
+                    <div class="flex justify-between items-center font-bold mb-1">
+                        <label for="energy-slider" class="text-gray-400 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                            ENERGY
+                        </label>
+                        <span id="energy-value" class="text-purple-400 text-lg bg-gray-900 px-3 py-1 rounded-md">50</span>
+                    </div>
+                    <input type="range" id="energy-slider" min="1" max="100" value="50" class="slider">
+                    <div class="flex justify-between text-xs text-gray-500 px-1">
+                        <span>차분함</span>
+                        <span>폭발적</span>
+                    </div>
+                </div>
+
+                <!-- Vibe Slider -->
+                <div class="slider-group">
+                    <div class="flex justify-between items-center font-bold mb-1">
+                        <label for="vibe-slider" class="text-gray-400 flex items-center gap-2">
+                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gem"><path d="M6 3h12l4 6-10 13L2 9Z"></path><path d="M12 22V9"></path><path d="m3.5 8.5 17 0"></path><path d="m8.5 3.5 7 5.5"></path><path d="m15.5 3.5-7 5.5"></path></svg>
+                            VIBE
+                        </label>
+                        <span id="vibe-value" class="text-purple-400 text-lg bg-gray-900 px-3 py-1 rounded-md">50</span>
+                    </div>
+                    <input type="range" id="vibe-slider" min="1" max="100" value="50" class="slider">
+                    <div class="flex justify-between text-xs text-gray-500 px-1">
+                        <span>가벼움</span>
+                        <span>진중함</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Keywords -->
+            <div class="keyword-group">
+                <label class="block font-bold mb-3 text-gray-400 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles"><path d="m12 3-1.9 3.9-3.9 1.9 3.9 1.9L12 17l1.9-3.9 3.9-1.9-3.9-1.9L12 3Z"></path><path d="M5 8v4"></path><path d="M3 10h4"></path><path d="M19 8v4"></path><path d="M17 10h4"></path></svg>
+                    KEYWORDS
+                </label>
+                <div class="flex flex-wrap gap-3">
+                    <button class="keyword-btn">#위로</button>
+                    <button class="keyword-btn">#자신감</button>
+                    <button class="keyword-btn">#낭만</button>
+                    <button class="keyword-btn">#고독</button>
+                    <button class="keyword-btn">#성찰</button>
+                    <button class="keyword-btn">#드라이브</button>
+                    <button class="keyword-btn">#새벽</button>
+                </div>
+            </div>
+            
+            <!-- Submit Button -->
+            <button id="find-track-btn" class="w-full py-3 text-lg font-bold bg-gradient-to-r from-purple-600 to-purple-500 text-white rounded-lg transition-all duration-300 hover:from-purple-700 hover:to-purple-600 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-400 focus:ring-opacity-50">
+                [ 내 무드에 맞는 트랙 찾기 ]
+            </button>
+        </main>
+        
+        <!-- Result Section -->
+        <section id="result-section" class="mt-10 min-h-[160px] flex justify-center items-center"></section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM 요소 선택 ---
+            const findTrackBtn = document.getElementById('find-track-btn');
+            const resultSection = document.getElementById('result-section');
+            const energySlider = document.getElementById('energy-slider');
+            const vibeSlider = document.getElementById('vibe-slider');
+            const energyValueSpan = document.getElementById('energy-value');
+            const vibeValueSpan = document.getElementById('vibe-value');
+            const keywordButtons = document.querySelectorAll('.keyword-btn');
+
+            // --- 이벤트 리스너 설정 ---
+
+            // 슬라이더 값을 실시간으로 업데이트하는 함수
+            const updateSliderValue = (slider, span) => {
+                span.textContent = slider.value;
+            };
+
+            // 페이지 로드 시 초기 값 설정
+            updateSliderValue(energySlider, energyValueSpan);
+            updateSliderValue(vibeSlider, vibeValueSpan);
+
+            // 슬라이더 이벤트
+            energySlider.addEventListener('input', () => updateSliderValue(energySlider, energyValueSpan));
+            vibeSlider.addEventListener('input', () => updateSliderValue(vibeSlider, vibeValueSpan));
+
+            // 키워드 버튼 클릭 이벤트
+            keywordButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Tailwind CSS 클래스를 사용하여 'active' 상태 토글
+                    btn.classList.toggle('bg-purple-600');
+                    btn.classList.toggle('text-white');
+                    btn.classList.toggle('border-purple-500');
+                    btn.classList.toggle('bg-gray-700');
+                    btn.classList.toggle('text-gray-400');
+                });
+            });
+            
+            // 트랙 찾기 버튼 클릭 이벤트
+            findTrackBtn.addEventListener('click', () => {
+                // 1. 현재 컨트롤 값 가져오기
+                const energyValue = energySlider.value;
+                const vibeValue = vibeSlider.value;
+                const selectedKeywords = Array.from(keywordButtons)
+                                              .filter(btn => btn.classList.contains('bg-purple-600'))
+                                              .map(btn => btn.textContent);
+
+                // 2. 로딩 애니메이션 표시
+                resultSection.innerHTML = `<div class="loader border-4 border-gray-600 border-t-purple-500 rounded-full w-12 h-12"></div>`;
+
+                // 3. 백엔드에 데이터 전송하여 추천 요청
+                fetch('/recommend', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        energy: energyValue,
+                        vibe: vibeValue,
+                        keywords: selectedKeywords
+                    }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('서버 응답에 문제가 있습니다.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+                    // 4. 추천 결과를 카드 형태로 표시
+                    resultSection.innerHTML = `
+                        <div class="result-card fade-in flex flex-col sm:flex-row items-center gap-6 bg-gray-800 p-6 rounded-2xl w-full border border-gray-700">
+                            <img class="album-art w-32 h-32 sm:w-40 sm:h-40 rounded-lg object-cover album-shadow" src="${data.album_art_url}" alt="${data.album}" onerror="this.onerror=null;this.src='https://placehold.co/160x160/1f2937/a78bfa?text=Art';" />
+                            <div class="text-center sm:text-left">
+                                <p class="text-sm text-purple-400 font-medium">당신의 무드를 위한 추천 트랙</p>
+                                <h3 class="track-title text-2xl sm:text-3xl font-bold mt-1">${data.track_title}</h3>
+                                <p class="artist-album text-gray-400 mt-1">${data.artist} - ${data.album}</p>
+                            </div>
+                        </div>
+                    `;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // 5. 에러 발생 시 사용자에게 메시지 표시
+                    resultSection.innerHTML = `<p class="error-text fade-in text-red-400 bg-red-900 bg-opacity-30 p-4 rounded-lg">⚠️ 추천 곡을 찾지 못했습니다. 잠시 후 다시 시도해주세요.</p>`;
+                });
+            });
+
+            // 초기 키워드 버튼 스타일 설정
+            keywordButtons.forEach(btn => {
+                btn.classList.add('bg-gray-700', 'text-gray-400', 'border-gray-600', 'py-2', 'px-4', 'rounded-full', 'transition-colors', 'duration-200', 'hover:bg-gray-600');
+            });
+        });
+    </script>
+</body>
+</html>
+

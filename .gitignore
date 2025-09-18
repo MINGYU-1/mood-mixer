@@ -3,3 +3,5 @@
 /mood-mixer-practice
 *.pkl
 *.csv
+/mood
+/mood-mixer-practice1/.env
