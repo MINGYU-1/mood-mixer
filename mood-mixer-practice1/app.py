@@ -50,9 +50,49 @@ def recommend():
         keywords = data['keywords']
 
         # 2. 사용자 입력을 자연어 쿼리로 변환
-        # 슬라이더 값에 따라 에너지와 분위기를 설명하는 텍스트 생성
-        energy_desc = f"에너지가 {'폭발적인' if energy > 66 else '중간 정도의' if energy > 33 else '차분한'}"
-        vibe_desc = f"분위기가 {'진중하고 깊이 있는' if vibe > 66 else '중간 정도인' if vibe > 33 else '가볍고 청량한'}"
+        # 에너지 값 (1-100)을 10개 구간으로 나누어 설명 생성
+        if energy <= 10:
+            energy_desc = "에너지가 매우 차분하고 잔잔한"
+        elif energy <= 20:
+            energy_desc = "에너지가 차분하고 몽환적인"
+        elif energy <= 30:
+            energy_desc = "에너지가 편안하고 나른한"
+        elif energy <= 40:
+            energy_desc = "에너지가 부드러운 그루브가 있는"
+        elif energy <= 50:
+            energy_desc = "에너지가 적당히 리드미컬한"
+        elif energy <= 60:
+            energy_desc = "에너지가 흥겨운 리듬의"
+        elif energy <= 70:
+            energy_desc = "에너지가 활기차고 신나는"
+        elif energy <= 80:
+            energy_desc = "에너지가 강렬하고 파워풀한"
+        elif energy <= 90:
+            energy_desc = "에너지가 폭발적이고 격렬한"
+        else:
+            energy_desc = "에너지가 압도적으로 폭발하는"
+
+        # 분위기 값 (1-100)을 10개 구간으로 나누어 설명 생성
+        if vibe <= 10:
+            vibe_desc = "분위기가 매우 가볍고 경쾌한"
+        elif vibe <= 20:
+            vibe_desc = "분위기가 산뜻하고 청량한"
+        elif vibe <= 30:
+            vibe_desc = "분위기가 밝고 긍정적인"
+        elif vibe <= 40:
+            vibe_desc = "분위기가 감성적이고 부드러운"
+        elif vibe <= 50:
+            vibe_desc = "분위기가 담담하고 솔직한"
+        elif vibe <= 60:
+            vibe_desc = "분위기가 진솔하고 성찰적인"
+        elif vibe <= 70:
+            vibe_desc = "분위기가 진지하고 무게감 있는"
+        elif vibe <= 80:
+            vibe_desc = "분위기가 깊고 철학적인"
+        elif vibe <= 90:
+            vibe_desc = "분위기가 어둡고 진중한"
+        else:
+            vibe_desc = "분위기가 압도적으로 무겁고 진중한"
         
         # 선택된 키워드를 쿼리에 자연스럽게 통합
         if keywords:
@@ -89,3 +129,4 @@ def recommend():
 if __name__ == '__main__':
     # 디버그 모드로 Flask 앱 실행 (개발 중에만 사용)
     app.run(debug=True, port=5001)
+

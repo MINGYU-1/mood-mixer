@@ -4,4 +4,6 @@
 *.pkl
 *.csv
 /mood
-/mood-mixer-practice1/.env
+/mood-mixer-practice1 copy
+*.env
+*.pyc
