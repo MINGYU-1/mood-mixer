@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OBOE: AI Lyric Analyzer</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
         body { background-color: #0A0A0A; color: #E0E0E0; font-family: 'Noto Sans KR', sans-serif; }
         .font-title { font-family: 'Nanum Myeongjo', serif; }
@@ -20,7 +22,7 @@
         .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
         @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
 
-        /* --- 까리한 아코디언 스타일 --- */
+        /* 아코디언 메뉴 스타일 */
         .lyrics-accordion summary {
             cursor: pointer;
             padding: 1rem;
@@ -31,60 +33,146 @@
             justify-content: space-between;
             align-items: center;
         }
-        .lyrics-accordion summary:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-        .lyrics-accordion summary::-webkit-details-marker {
-            display: none;
-        }
-        .lyrics-accordion .arrow {
-            transition: transform 0.2s ease-in-out;
-        }
-        .lyrics-accordion[open] .arrow {
-            transform: rotate(90deg);
-        }
-        .lyrics-accordion .lyrics-content {
-            padding: 1rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
+        .lyrics-accordion summary:hover { background-color: rgba(255, 255, 255, 0.1); }
+        .lyrics-accordion summary::-webkit-details-marker { display: none; }
+        .lyrics-accordion .arrow { transition: transform 0.2s ease-in-out; }
+        .lyrics-accordion[open] .arrow { transform: rotate(90deg); }
+        .lyrics-accordion .lyrics-content { padding: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.1); }
     </style>
 </head>
-<body class="grainy-effect">
-    <div class="container mx-auto px-4 py-12 max-w-6xl">
-        <header class="text-center my-12">
-            <h1 class="font-title text-5xl md:text-7xl font-bold tracking-wider">OBOE</h1>
-            <p class="text-gray-400 mt-4 text-lg">AI Lyric Analyzer with LangChain</p>
-            <div class="flex justify-center my-16 md:my-24 opacity-50">
-                <img src="https://i.imgur.com/8Q1Z2Xy.png" alt="Oboe album art concept" class="w-64 h-auto mix-blend-lighten"/>
-            </div>
+<body>
+    <div class="container mx-auto px-4 py-16 md:py-24 max-w-4xl">
+
+        <header class="text-center mb-24 md:mb-32">
+            <h1 class="font-title text-4xl md:text-6xl font-bold tracking-widest">OBOE</h1>
+            <p class="text-gray-400 mt-4 text-lg md:text-xl">An AI-Powered Analysis of YANG HONG WON's Lyrics</p>
+            <p class="text-gray-500 mt-2 text-sm md:text-base">AI의 시선으로 바라본 가사의 의미와 구조</p>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div class="card p-6 rounded-xl">
-                <h2 class="font-title text-2xl font-bold mb-4 text-purple-300">전체 가사 보기</h2>
-                <div id="lyrics-container" class="h-96 overflow-y-auto pr-2 space-y-2">
+        <section class="mb-24 md:mb-32">
+            <div class="text-center max-w-2xl mx-auto">
+                <h2 class="font-title text-2xl md:text-3xl font-semibold mb-4">How AI Understands Poetry</h2>
+                <p class="text-gray-400 leading-relaxed">
+                    양홍원의 가사는 단순한 단어의 나열이 아닌, 복잡한 감정과 은유의 집합체입니다. AI가 이 깊이를 이해하기 위해선, 원본 텍스트를 AI의 언어로 '번역'하는 과정이 필수적입니다. 이 과정은 '전처리'와 '임베딩'이라는 핵심 단계를 거치며, AI가 가사의 숨겨진 맥락을 파악하고 깊이 있는 해석을 생성하는 기반이 됩니다.
+                </p>
+            </div>
+        </section>
+        
+        <div class="flex justify-center my-16 md:my-24 opacity-50">
+            <img src="images/오보에1.jpg" alt="Oboe album art concept" class="w-64 h-auto mix-blend-lighten"/>
+        </div>
+
+        <div class="space-y-12 md:space-y-20">
+            <div class="card p-6 md:p-8 rounded-xl">
+                <h3 class="font-title text-xl md:text-2xl font-bold text-purple-300 mb-4">Part 1. 정제 (Preprocessing)</h3>
+                <p class="text-gray-400 mb-6">AI가 가사를 학습하기 전, 날것의 텍스트를 의미 있는 단위로 나누고 정제합니다. 불필요한 노이즈를 제거하고, 핵심 의미를 담은 '조각(Chunk)'으로 분할하는 과정은 AI의 이해도를 높이는 첫걸음입니다.</p>
+                <div class="space-y-4">
+                    <div class="bg-black/30 p-4 rounded">
+                        <h4 class="font-semibold mb-2 text-gray-300">원본 가사 (Raw Text)</h4>
+                        <p class="text-sm text-gray-500 font-mono whitespace-pre-line">흘러가길 피로
+흘러가길 1로
+이건 내 첫 이별
+향수 선물같이 비려
+포장해 편지를
+예쁜 꽃 가시로</p>
                     </div>
+                    <div class="bg-black/30 p-4 rounded">
+                        <h4 class="font-semibold mb-2 text-gray-300">의미 단위 분할 (Chunking)</h4>
+                        <div class="space-y-2">
+                            <p class="text-sm text-gray-400 font-mono border-l-2 border-purple-400 pl-2">Chunk 1: "흘러가길 피로, 흘러가길 1로, 이건 내 첫 이별"</p>
+                            <p class="text-sm text-gray-400 font-mono border-l-2 border-purple-400 pl-2">Chunk 2: "향수 선물같이 비려, 포장해 편지를 예쁜 꽃 가시로"</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="card p-6 rounded-xl flex flex-col">
-                <h2 class="font-title text-2xl font-bold mb-4 text-teal-300">가사 의미 물어보기</h2>
-                <div id="chat-window" class="flex-1 overflow-y-auto mb-4 p-2 flex flex-col space-y-4">
-                    <div class="chat-bubble ai-bubble">안녕하세요! 양홍원 '오보에' 앨범에 대해 궁금한 점을 물어보세요. 예를 들어, "'사실로 엉킨 실'은 무슨 뜻이야?" 라고 질문할 수 있습니다.</div>
+            <div class="card p-6 md:p-8 rounded-xl">
+                <h3 class="font-title text-xl md:text-2xl font-bold text-teal-300 mb-4">Part 2. 번역 (Embedding)</h3>
+                <p class="text-gray-400 mb-6">정제된 텍스트 조각들은 수많은 차원을 가진 '의미의 공간' 속 벡터(좌표)로 변환됩니다. '이별'과 '상실'은 가까운 곳에, '환희'와 '성취'는 다른 곳에 위치하게 됩니다. 이 과정을 통해 AI는 단어와 문장의 미묘한 의미적 관계를 학습합니다.</p>
+                <div class="p-4 bg-black/30 rounded text-center">
+                    <p class="font-mono text-teal-400 text-sm md:text-base">"내 첫 이별" <span class="text-gray-500 font-sans mx-2">→</span> [0.012, -0.98, ..., 0.453]</p>
+                    <p class="text-xs text-gray-500 mt-2">텍스트가 AI가 이해할 수 있는 고차원 벡터로 변환됩니다.</p>
                 </div>
-                <div id="loading-indicator" class="hidden my-2 pl-2">
-                    <div class="chat-bubble ai-bubble loading-dots">
-                        <span></span><span></span><span></span>
-                    </div>
+            </div>
+            
+            <div class="card p-6 md:p-8 rounded-xl">
+                <h3 class="font-title text-xl md:text-2xl font-bold text-amber-300 mb-4">Part 3. 해석 (Retrieval & Generation)</h3>
+                <p class="text-gray-400 mb-6">"양홍원의 가사에서 '이별'은 어떻게 표현되나?" 라는 질문에, AI는 벡터 공간에서 질문과 가장 가까운 가사 조각들을 검색(Retrieve)합니다. 그리고 이 조각들을 근거로, 질문에 대한 깊이 있는 답변을 새롭게 생성(Generate)합니다.</p>
+                <div class="p-4 bg-black/30 rounded">
+                    <p class="font-semibold text-gray-300">질문: <span class="font-normal text-gray-400">"가사 속 화자는 이별을 어떻게 받아들이고 있나?"</span></p>
+                    <hr class="border-gray-700 my-3">
+                    <p class="font-semibold text-gray-300">AI의 답변 생성 과정:</p>
+                    <p class="text-sm text-amber-400 mt-2 font-mono">1. <span class="text-gray-500">Retrieve relevant chunks:</span> ["...첫 이별", "...선물같이 비려", "...예쁜 꽃 가시로"]</p>
+                    <p class="text-sm text-amber-400 mt-1 font-mono">2. <span class="text-gray-500">Generate answer based on context:</span> "화자에게 이별은 피와 같이 고통스럽지만, 동시에 가시 돋친 꽃으로 포장된 선물처럼 양가적인 감정으로 다가옵니다..."</p>
                 </div>
-                <form id="chat-form" class="flex space-x-2">
-                    <input type="text" id="chat-input" placeholder="가사에 대해 질문해보세요..." class="flex-1 bg-gray-800 border border-gray-600 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400 text-white">
-                    <button type="submit" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-5 rounded-full transition-colors">전송</button>
-                </form>
             </div>
         </div>
+
+        <section class="mt-24 md:mt-32">
+            <h2 class="font-title text-center text-3xl md:text-4xl font-bold mb-12 md:mb-16">Final Analysis: OBOE</h2>
+            
+            <div class="space-y-12">
+                <div class="card p-6 md:p-8 rounded-xl">
+                    <h3 class="font-title text-2xl font-bold mb-2">실 (Thread)</h3>
+                    <p class="text-gray-500 mb-6">"사실로 엉킨 실로 노를 저어 멀리로"</p>
+                    <div class="flex justify-center my-16 md:my-24 opacity-50">
+                    <img src="images/실.jpg" alt="Oboe album art concept" class="w-64 h-auto mix-blend-lighten"/>
+                    </div>
+                    <h4 class="font-semibold text-purple-300 mb-2">AI-Generated Interpretation:</h4>
+                    <p class="text-gray-300 leading-relaxed">
+                        '실'은 화자의 복잡한 내면과 관계의 얽힘을 상징합니다. 가사에서 '실'은 '사실'과 발음의 유사성을 통해 진실과 거짓, 현실과 환상이 뒤엉킨 상태를 암시합니다. 화자는 이 엉킨 실, 즉 혼란스러운 현실을 노 삼아 미지의 세계로 나아가려 합니다. 이는 과거로부터의 탈출이자, 고통스러운 진실을 동력으로 삼아 나아가려는 처절한 의지의 표현으로 해석됩니다. '첫 이별'과 '피'의 이미지는 이 과정이 순탄치 않은, 상처로 가득한 여정임을 보여줍니다.
+                    </p>
+                </div>
+
+                <div class="card p-6 md:p-8 rounded-xl">
+                    <h3 class="font-title text-2xl font-bold mb-2">가면무도회 (Masquerade)</h3>
+                    <p class="text-gray-500 mb-6">"나 혼자 가면무도회, 그 미소마저 함부로 해"</p>
+                    <div class="flex justify-center my-16 md:my-24 opacity-50">
+                    <img src="images/가면무도회.jpg" alt="Oboe album art concept" class="w-64 h-auto mix-blend-lighten"/>
+                    </div>
+                    <h4 class="font-semibold text-teal-300 mb-2">AI-Generated Interpretation:</h4>
+                    <p class="text-gray-300 leading-relaxed">
+                        '가면무도회'는 도시의 화려함 속에서 느끼는 개인의 소외와 정체성 혼란을 그립니다. 'Too much city lights'는 외부의 자극이 너무 강해 오히려 자신의 내면을 보지 못하는 상태를 의미합니다. 화자는 수많은 군중 속에서 가면을 쓴 채 홀로 춤을 추고 있으며, 심지어 자신의 '미소'마저 진심이 아닌 연기의 일부가 되어버렸습니다. 이는 타인과의 관계뿐만 아니라 자기 자신과도 단절된 현대인의 깊은 고독과, 진짜 자신을 잃어버린 것에 대한 공허함을 상징합니다.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mt-24 md:mt-32">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="card p-6 rounded-xl">
+                    <h3 class="font-title text-2xl font-bold mb-4 text-purple-300">전체 가사 보기</h3>
+                    <div id="lyrics-container" class="h-96 overflow-y-auto pr-2 space-y-2">
+                        </div>
+                </div>
+
+                <div class="card p-6 rounded-xl flex flex-col">
+                    <h3 class="font-title text-2xl font-bold mb-4 text-teal-300">가사 의미 물어보기</h3>
+                    <div id="chat-window" class="flex-1 overflow-y-auto mb-4 p-2 flex flex-col space-y-4">
+                        <div class="chat-bubble ai-bubble">안녕하세요! 양홍원 '오보에' 앨범에 대해 궁금한 점을 물어보세요. 예를 들어, "'사실로 엉킨 실'은 무슨 뜻이야?" 라고 질문할 수 있습니다.</div>
+                    </div>
+                    <div id="loading-indicator" class="hidden my-2 pl-2">
+                        <div class="chat-bubble ai-bubble loading-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                    <form id="chat-form" class="flex space-x-2">
+                        <input type="text" id="chat-input" placeholder="가사에 대해 질문해보세요..." class="flex-1 bg-gray-800 border border-gray-600 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400 text-white">
+                        <button type="submit" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-5 rounded-full transition-colors">전송</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center mt-24 md:mt-32 pt-12 border-t border-white/10">
+            <p class="text-gray-600">This project demonstrates the importance of preprocessing and embedding for deep lyrical analysis.</p>
+            <p class="text-gray-700 text-sm mt-1">Inspired by the works of YANG HONG WON.</p>
+        </footer>
+
     </div>
 
     <script>
+        // --- 데이터 영역: OBOE 앨범 전체 가사 ---
         const lyricsData = `
 <실>
 흘러가길 피로
@@ -381,11 +469,18 @@ Too much city lights
 차를 달이길 30에는
         `;
         
-        // --- 까리한 아코디언 렌더링 함수 ---
+        // --- 기능 구현 영역 ---
+
+        /**
+         * 가사 데이터를 파싱하여 아코디언 UI를 생성하고 화면에 렌더링하는 함수
+         */
         function renderLyricsAccordion() {
             const container = document.getElementById('lyrics-container');
+            if (!container) return; // 컨테이너가 없으면 함수 종료
+            
             container.innerHTML = ''; // 기존 내용 초기화
 
+            // 줄바꿈과 '<' 기호를 기준으로 노래별로 데이터를 나눔
             const songs = lyricsData.trim().split(/\n(?=<)/);
 
             songs.forEach(songText => {
@@ -394,6 +489,7 @@ Too much city lights
                     const title = match[1];
                     const lyrics = match[2].trim();
 
+                    // details와 summary 태그로 아코디언 구조 생성
                     const details = document.createElement('details');
                     details.className = 'lyrics-accordion';
 
@@ -421,16 +517,15 @@ Too much city lights
             });
         }
 
-        document.addEventListener('DOMContentLoaded', renderLyricsAccordion);
-
-        // --- 채팅 기능 로직 (기존과 동일) ---
+        // --- 채팅 기능 로직 ---
         const chatForm = document.getElementById('chat-form');
         const chatInput = document.getElementById('chat-input');
         const chatWindow = document.getElementById('chat-window');
         const loadingIndicator = document.getElementById('loading-indicator');
 
+        // 폼 전송 이벤트 리스너
         chatForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+            e.preventDefault(); // 페이지 새로고침 방지
             const question = chatInput.value.trim();
             if (!question) return;
 
@@ -438,7 +533,9 @@ Too much city lights
             chatInput.value = '';
             loadingIndicator.style.display = 'block';
 
+            // 백엔드 서버에 질문 전송 및 답변 수신
             try {
+                // 이 주소(http://127.0.0.1:5000/ask)는 실제 AI 모델이 실행되고 있는 서버의 주소입니다.
                 const response = await fetch('http://127.0.0.1:5000/ask', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -446,27 +543,39 @@ Too much city lights
                 });
 
                 if (!response.ok) {
-                    throw new Error('서버에서 오류가 발생했습니다.');
+                    throw new Error('서버 응답 오류');
                 }
 
                 const data = await response.json();
                 appendMessage(data.answer, 'ai');
 
             } catch (error) {
-                appendMessage('죄송합니다. 답변을 가져오는 데 실패했습니다. 백엔드 서버가 실행 중인지 확인해주세요.', 'ai');
+                // 서버 연결 실패 시 사용자에게 보여줄 에러 메시지
+                appendMessage('죄송합니다. 답변을 가져오는 데 실패했습니다. 서버가 실행 중인지 확인해주세요.', 'ai');
                 console.error('Error:', error);
             } finally {
                 loadingIndicator.style.display = 'none';
             }
         });
 
+        /**
+         * 채팅창에 메시지를 추가하는 함수
+         * @param {string} text - 메시지 내용
+         * @param {'user' | 'ai'} sender - 메시지를 보낸 사람 (사용자 또는 AI)
+         */
         function appendMessage(text, sender) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `chat-bubble ${sender === 'user' ? 'user-bubble' : 'ai-bubble'}`;
-            messageDiv.innerHTML = text.replace(/\n/g, '<br>');
+            messageDiv.innerHTML = text.replace(/\n/g, '<br>'); // 줄바꿈 문자를 <br> 태그로 변경
             chatWindow.appendChild(messageDiv);
-            chatWindow.scrollTop = chatWindow.scrollHeight;
+            chatWindow.scrollTop = chatWindow.scrollHeight; // 항상 최신 메시지가 보이도록 스크롤
         }
+        
+        // --- 초기 실행 ---
+        
+        // DOM 콘텐츠가 모두 로드되면 가사 아코디언을 렌더링
+        document.addEventListener('DOMContentLoaded', renderLyricsAccordion);
+
     </script>
 </body>
 </html>

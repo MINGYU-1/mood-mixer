@@ -1,14 +1,16 @@
-# backend/chatbot.py
 import os
 from dotenv import load_dotenv
 
-from langchain_community.document_loaders import PyPDFLoader, TextLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+# LangChain 관련 라이브러리 임포트
 from langchain_community.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.memory import ConversationBufferMemory
+from langchain.chains import ConversationalRetrievalChain
 from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
+from langchain_core.documents import Document
 
+# 가사 데이터 임포트
 from lyrics import LYRICS_DATA
 
 # .env 파일에서 API 키 로드
@@ -18,55 +20,79 @@ os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 class LyricChatbot:
     def __init__(self):
         self.vector_store = self._create_vector_store()
-        self.llm = ChatOpenAI(model_name="gpt-4", temperature=0.2)
-        self.prompt = self._create_prompt_template()
-        self.chain = LLMChain(llm=self.llm, prompt=self.prompt)
+        self.memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+        self.chain = self._setup_conversational_chain()
 
     def _create_vector_store(self):
-        # 텍스트 데이터를 LangChain의 Document 형식으로 변환
-        # 각 줄을 별도의 문서로 취급하여 검색 정확도를 높임
-        documents = [doc for doc in LYRICS_DATA.split('\n') if doc.strip()]
+        """가사 데이터를 파싱하여 노래 제목 메타데이터와 함께 벡터 스토어를 생성합니다."""
         
+        # 가사를 노래별로 분리
+        songs = LYRICS_DATA.strip().split('\n\n')
+        documents = []
+        
+        for song_data in songs:
+            lines = song_data.strip().split('\n')
+            title = lines[0].strip()
+            content = "\n".join(lines[1:])
+            
+            # 노래 제목을 메타데이터로 추가
+            doc = Document(page_content=content, metadata={"song_title": title})
+            documents.append(doc)
+
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
-        split_docs = text_splitter.create_documents(documents)
+        split_docs = text_splitter.split_documents(documents)
         
         embeddings = OpenAIEmbeddings()
         
-        # FAISS 벡터 스토어 생성
         vectorstore = FAISS.from_documents(split_docs, embedding=embeddings)
-        print("Vector store created successfully.")
+        print("Vector store with metadata created successfully.")
         return vectorstore
 
-    def _create_prompt_template(self):
-        template = """
-        당신은 양홍원의 앨범 '오보에' 가사 전문가입니다. 
-        주어진 가사 내용을 바탕으로 사용자의 질문에 대해 친절하고 깊이 있게 설명해주세요. 
-        가사에 없는 내용은 추측하지 말고, 주어진 내용 안에서만 답변하세요.
+    def _setup_conversational_chain(self):
+        """대화형 검색 체인을 설정합니다."""
+        
+        llm = ChatOpenAI(model_name="gpt-4", temperature=0.3)
+        
+        # 답변 생성을 위한 커스텀 프롬프트 템플릿
+        custom_prompt_template = """
+        당신은 양홍원의 앨범 '오보에'를 심도 있게 분석하는 음악 평론가입니다.
+        주어진 '관련 가사'와 '대화 내용'을 바탕으로 사용자의 질문에 대해 깊이 있고 통찰력 있는 답변을 제공해주세요.
+        답변은 반드시 주어진 가사 내용에 근거해야 하며, 가사에 없는 내용은 절대 추측하거나 지어내면 안 됩니다.
+        친절하고 전문적인 말투를 사용해주세요.
 
-        --- 관련 가사 내용 ---
+        --- 관련 가사 ---
         {context}
-        --------------------
+        -----------------
+
+        --- 대화 내용 ---
+        {chat_history}
+        -----------------
 
         질문: {question}
-        답변:
+        전문가 답변:
         """
-        return PromptTemplate(template=template, input_variables=["context", "question"])
+        
+        PROMPT = PromptTemplate(
+            template=custom_prompt_template, input_variables=["context", "chat_history", "question"]
+        )
+
+        # 대화형 체인 생성
+        chain = ConversationalRetrievalChain.from_llm(
+            llm=llm,
+            retriever=self.vector_store.as_retriever(search_kwargs={'k': 4}), # 관련성 높은 구절 4개를 검색
+            memory=self.memory,
+            combine_docs_chain_kwargs={"prompt": PROMPT}
+        )
+        return chain
 
     def get_response(self, user_query):
+        """사용자 질문에 대한 답변을 생성합니다."""
         try:
-            # 질문과 가장 유사한 가사 구절을 벡터 스토어에서 검색
-            retriever = self.vector_store.as_retriever(search_kwargs={'k': 5})
-            relevant_docs = retriever.invoke(user_query)
-            
-            # 검색된 문서들의 내용을 context로 합침
-            context = "\n".join([doc.page_content for doc in relevant_docs])
-            
-            # 프롬프트와 LLM을 통해 답변 생성
-            response = self.chain.run({"context": context, "question": user_query})
-            return response
+            result = self.chain.invoke({"question": user_query})
+            return result['answer']
         except Exception as e:
             print(f"Error getting response: {e}")
-            return "죄송합니다, 답변을 생성하는 중에 오류가 발생했습니다."
+            return "죄송합니다, 답변을 생성하는 중에 오류가 발생했습니다. API 키 설정을 확인해주세요."
 
-# 챗봇 인스턴스 생성 (서버 시작 시 한 번만 실행)
+# 서버 시작 시 한 번만 챗봇 인스턴스를 생성합니다.
 chatbot_instance = LyricChatbot()
